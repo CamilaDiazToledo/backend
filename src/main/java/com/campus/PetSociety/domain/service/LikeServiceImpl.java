@@ -31,6 +31,7 @@ public class LikeServiceImpl implements LikeService {
     private final UserRepository userRepositorty;
     private final PostRepository postRepositorty;
     private final CommentRepository commentRepository;
+   
 
     @Autowired
     public LikeServiceImpl(LikeRespository likeRepositorty, UserRepository userRepositorty, PostRepository postRepositorty, CommentRepository commentRepository) {
@@ -136,14 +137,17 @@ public class LikeServiceImpl implements LikeService {
         System.out.println("Verificando si el like con ID: " + idLike + " existe.");
         if (likeRepositorty.existsById(idLike)) {
             System.out.println("El like existe. Procediendo a eliminar.");
-            likeRepositorty.deleteLikeById(idLike);
-            System.out.println("Like eliminado.");
-            throw new NotFoundException("Like deleted");
+           Likes like = likeRepositorty.findById(idLike).get();
+          Post post =   postRepositorty.findPostByLike(like).get();
+          post.removeLikes(like);
+           postRepositorty.save(post);
+            likeRepositorty.deleteLikeById(like.getIdLike());
+           
         } else {
             System.out.println("El like con ID: " + idLike + " no existe.");
             throw new NotFoundException("No like found");
         }
+        return null;
 
     }
-
 }

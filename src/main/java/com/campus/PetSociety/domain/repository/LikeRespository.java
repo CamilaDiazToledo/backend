@@ -17,13 +17,14 @@ import org.springframework.data.jpa.repository.Query;
  * @author camid
  */
 public interface LikeRespository extends JpaRepository<Likes, Long> {
-    List<Likes> findByIdPost_IdPost(Long IdPost);
-    List<Likes> findByIdComment_IdComment(Long IdComment);
-    
 
-    
+    List<Likes> findByIdPost_IdPost(Long IdPost);
+
+    List<Likes> findByIdComment_IdComment(Long IdComment);
+
     @Modifying
     @Transactional
     @Query("DELETE FROM Likes l WHERE l.idLike = :likeId")
-    void deleteLikeById(Long likeId);
+    int deleteLikeById(Long likeId);
+
 }

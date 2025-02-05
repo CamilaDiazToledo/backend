@@ -4,6 +4,7 @@
  */
 package com.campus.PetSociety.domain.repository;
 
+import com.campus.PetSociety.persistence.entity.Likes;
 import com.campus.PetSociety.persistence.entity.Post;
 import jakarta.transaction.Transactional;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  *
@@ -26,5 +28,9 @@ public interface PostRepository extends JpaRepository<Post, Long>{
     @Transactional
     @Query("DELETE FROM Post p WHERE p.idPost = :postId")
     void deletePostById(Long postId);
+   
     
+    @Query("SELECT p FROM Post p JOIN p.likes l WHERE l = :like")
+    Optional<Post> findPostByLike(@Param("like") Likes like);
+            
 }

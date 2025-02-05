@@ -62,18 +62,18 @@ public class PetSocietyApplication {
         LikePostDto createdLikePost = likePostResponse.getBody();
 
         // Ejecutar el método deleteLike
-        try {
-            System.out.println("Intentando eliminar el like con ID: " + createdLikePost.getIdLike());
-            likeService.deleteLike(createdLikePost.getIdLike());
-        } catch (NotFoundException e) {
-            System.out.println(e.getMessage());
-        }
+//        try {
+//            System.out.println("Intentando eliminar el like con ID: " + createdLikePost.getIdLike());
+//            likeService.deleteLike(createdLikePost.getIdLike());
+//        } catch (NotFoundException e) {
+//            System.out.println(e.getMessage());
+//        }
 
         // Imprimir detalles para verificar
-        System.out.println("Usuario creado: " + createdUser);
-        System.out.println("Post creado: " + createdPost);
-        System.out.println("Comentario creado: " + createdComment);
-        System.out.println("Like creado: " + createdLikePost);
+//        System.out.println("Usuario creado: " + createdUser);
+//        System.out.println("Post creado: " + createdPost);
+//        System.out.println("Comentario creado: " + createdComment);
+//        System.out.println("Like creado: " + createdLikePost);
 
     }
 

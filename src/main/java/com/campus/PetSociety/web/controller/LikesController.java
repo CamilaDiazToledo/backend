@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class LikesController {
     
     private final LikeServiceImpl likeServiceImpl;
+ 
     
     @Autowired
     public LikesController(LikeServiceImpl likeServiceImpl){
@@ -75,6 +76,7 @@ public class LikesController {
     //DELETE
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteLike(@PathVariable Long id){
+        
         return likeServiceImpl.deleteLike(id);
     }
     
