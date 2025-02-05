@@ -1,0 +1,30 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
+ */
+package com.campus.PetSociety.domain.repository;
+
+import com.campus.PetSociety.persistence.entity.Post;
+import jakarta.transaction.Transactional;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+
+/**
+ *
+ * @author camid
+ */
+public interface PostRepository extends JpaRepository<Post, Long>{
+    
+    
+    @Query("SELECT p FROM Post p JOIN p.idUser u WHERE u.email = :email")
+    List<Post> findByUserEmail(String email);
+    
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM Post p WHERE p.idPost = :postId")
+    void deletePostById(Long postId);
+    
+}

@@ -1,0 +1,149 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.campus.PetSociety.domain.service;
+
+import com.campus.PetSociety.domain.repository.LikeRespository;
+import com.campus.PetSociety.domain.repository.*;
+import com.campus.PetSociety.dto.CreateLikeCommentDto;
+import com.campus.PetSociety.dto.CreateLikePostDto;
+import com.campus.PetSociety.dto.LikeCommentDto;
+import com.campus.PetSociety.dto.LikePostDto;
+import com.campus.PetSociety.persistence.entity.*;
+import com.campus.PetSociety.web.exceptions.NotFoundException;
+import jakarta.transaction.Transactional;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+/**
+ *
+ * @author camid
+ */
+@Service
+public class LikeServiceImpl implements LikeService {
+
+    private final LikeRespository likeRepositorty;
+    private final UserRepository userRepositorty;
+    private final PostRepository postRepositorty;
+    private final CommentRepository commentRepository;
+
+    @Autowired
+    public LikeServiceImpl(LikeRespository likeRepositorty, UserRepository userRepositorty, PostRepository postRepositorty, CommentRepository commentRepository) {
+        this.likeRepositorty = likeRepositorty;
+        this.userRepositorty = userRepositorty;
+        this.postRepositorty = postRepositorty;
+        this.commentRepository = commentRepository;
+    }
+
+//CREATE......................................................................
+    //like post
+    @Transactional
+    @Override
+    public ResponseEntity<LikePostDto> createLikePost(CreateLikePostDto createLikePostDto) {
+        System.out.println("Iniciando creación de like para el post con datos: " + createLikePostDto);
+
+        Optional<Users> userOptional = userRepositorty.findByEmail(createLikePostDto.getEmailUser());
+        if (!userOptional.isPresent()) {
+            System.out.println("Usuario no encontrado con email: " + createLikePostDto.getEmailUser());
+            throw new NotFoundException("User not found with email: " + createLikePostDto.getEmailUser());
+        }
+        System.out.println("Usuario encontrado: " + userOptional.get());
+
+        Optional<Post> postOptional = postRepositorty.findById(createLikePostDto.getIdPost());
+        if (!postOptional.isPresent()) {
+            System.out.println("Post no encontrado con id: " + createLikePostDto.getIdPost());
+            throw new NotFoundException("Post not found with id: " + createLikePostDto.getIdPost());
+        }
+        System.out.println("Post encontrado: " + postOptional.get());
+
+        Users userEntity = userOptional.get();
+        Post postEntity = postOptional.get();
+
+        Likes likecreated = Likes.fromDTOCreateLikePost(createLikePostDto, userEntity, postEntity);
+        likecreated.setIdUser(userEntity);
+        likecreated.setIdPost(postEntity);
+
+        userEntity.addLikes(likecreated);
+        postEntity.addLikes(likecreated);
+
+        likecreated = likeRepositorty.save(likecreated);
+        System.out.println("Like creado: " + likecreated);
+
+        return ResponseEntity.ok(likecreated.toDTOLikePost());
+    }
+
+    //like comment
+    @Transactional
+    @Override
+    public ResponseEntity<LikeCommentDto> createLikeComment(CreateLikeCommentDto createLikeCommentDto) {
+
+        Optional<Users> userOptional = userRepositorty.findByEmail(createLikeCommentDto.getEmailUser());
+        if (!userOptional.isPresent()) {
+            throw new NotFoundException("User not found with email: " + createLikeCommentDto.getEmailUser());
+        }
+
+        Optional<Comment> commentOptional = commentRepository.findById(createLikeCommentDto.getIdComment());
+        if (!commentOptional.isPresent()) {
+            throw new NotFoundException("Comment not found with id: " + createLikeCommentDto.getIdComment());
+        }
+
+        Users userEntity = userOptional.get();
+        Comment commentEntity = commentOptional.get();
+
+        Likes likecreated = Likes.fromDTOCreateLikeComment(createLikeCommentDto, userEntity, commentEntity);
+        likecreated.setIdUser(userEntity);
+        likecreated.setIdComment(commentEntity);
+
+        userEntity.addLikes(likecreated);
+        commentEntity.addLikes(likecreated);
+
+        likecreated = likeRepositorty.save(likecreated);
+
+        return ResponseEntity.ok(likecreated.toDTOLikeComment());
+
+    }
+
+//GET.........................................................................
+    //todos por idPost
+    @Transactional
+    @Override
+    public List<LikePostDto> getAllLikeByIdPost(Long postId) {
+        List<Likes> likes = likeRepositorty.findByIdPost_IdPost(postId);
+        return likes.stream()
+                .map(Likes::toDTOLikePost)
+                .collect(Collectors.toList());
+    }
+
+    //todos por idComment
+    @Transactional
+    @Override
+    public List<LikeCommentDto> getAllLikeByIdComment(Long commentId) {
+        List<Likes> likes = likeRepositorty.findByIdComment_IdComment(commentId);
+        return likes.stream()
+                .map(Likes::toDTOLikeComment)
+                .collect(Collectors.toList());
+    }
+
+//DELETE.........................................................................
+    @Transactional
+    @Override
+    public ResponseEntity<Void> deleteLike(Long idLike) {
+        System.out.println("Verificando si el like con ID: " + idLike + " existe.");
+        if (likeRepositorty.existsById(idLike)) {
+            System.out.println("El like existe. Procediendo a eliminar.");
+            likeRepositorty.deleteLikeById(idLike);
+            System.out.println("Like eliminado.");
+            throw new NotFoundException("Like deleted");
+        } else {
+            System.out.println("El like con ID: " + idLike + " no existe.");
+            throw new NotFoundException("No like found");
+        }
+
+    }
+
+}
