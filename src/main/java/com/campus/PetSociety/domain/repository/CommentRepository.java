@@ -7,9 +7,11 @@ package com.campus.PetSociety.domain.repository;
 import com.campus.PetSociety.persistence.entity.*;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  *
@@ -22,5 +24,8 @@ public interface CommentRepository extends JpaRepository<Comment, Long>{
     @Transactional
     @Query("DELETE FROM Comment c WHERE c.idComment = :commentId")
     void deleteCommentById(Long commentId);
+    
+    @Query("SELECT c FROM Comment c JOIN c.likes l WHERE l = :like")
+    Optional<Comment> findCommentByLike(@Param("like") Likes like);
     
 }

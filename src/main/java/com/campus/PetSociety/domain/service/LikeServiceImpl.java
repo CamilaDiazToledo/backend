@@ -31,7 +31,6 @@ public class LikeServiceImpl implements LikeService {
     private final UserRepository userRepositorty;
     private final PostRepository postRepositorty;
     private final CommentRepository commentRepository;
-   
 
     @Autowired
     public LikeServiceImpl(LikeRespository likeRepositorty, UserRepository userRepositorty, PostRepository postRepositorty, CommentRepository commentRepository) {
@@ -131,18 +130,40 @@ public class LikeServiceImpl implements LikeService {
     }
 
 //DELETE.........................................................................
+    //delete like post
     @Transactional
     @Override
-    public ResponseEntity<Void> deleteLike(Long idLike) {
+    public ResponseEntity<Void> deleteLikePost(Long idLike) {
         System.out.println("Verificando si el like con ID: " + idLike + " existe.");
         if (likeRepositorty.existsById(idLike)) {
             System.out.println("El like existe. Procediendo a eliminar.");
-           Likes like = likeRepositorty.findById(idLike).get();
-          Post post =   postRepositorty.findPostByLike(like).get();
-          post.removeLikes(like);
-           postRepositorty.save(post);
+            Likes like = likeRepositorty.findById(idLike).get();
+            Post post = postRepositorty.findPostByLike(like).get();
+            post.removeLikes(like);
+            postRepositorty.save(post);
             likeRepositorty.deleteLikeById(like.getIdLike());
-           
+
+        } else {
+            System.out.println("El like con ID: " + idLike + " no existe.");
+            throw new NotFoundException("No like found");
+        }
+        return null;
+
+    }
+
+    //delete like comment
+    @Transactional
+    @Override
+    public ResponseEntity<Void> deleteLikeComment(Long idLike) {
+        System.out.println("Verificando si el like con ID: " + idLike + " existe.");
+        if (likeRepositorty.existsById(idLike)) {
+            System.out.println("El like existe. Procediendo a eliminar.");
+            Likes like = likeRepositorty.findById(idLike).get();
+            Comment comment = commentRepository.findCommentByLike(like).get();
+            comment.removeLikes(like);
+            commentRepository.save(comment);
+            likeRepositorty.deleteLikeById(like.getIdLike());
+
         } else {
             System.out.println("El like con ID: " + idLike + " no existe.");
             throw new NotFoundException("No like found");

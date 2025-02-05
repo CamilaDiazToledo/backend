@@ -74,10 +74,17 @@ public class LikesController {
     }
     
     //DELETE
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/delete/likepost/{id}")
     public ResponseEntity<Void> deleteLike(@PathVariable Long id){
         
-        return likeServiceImpl.deleteLike(id);
+        return likeServiceImpl.deleteLikePost(id);
+    }
+    
+    
+    @DeleteMapping("/delete/likecomment/{id}")
+    public ResponseEntity<Void> deleteLikeComment(@PathVariable Long id){
+        
+        return likeServiceImpl.deleteLikeComment(id);
     }
     
     

@@ -24,5 +24,6 @@ public interface LikeService {
     
     
     
-    ResponseEntity<Void>deleteLike(Long idLike);
+    ResponseEntity<Void>deleteLikePost(Long idLike);
+    ResponseEntity<Void>deleteLikeComment(Long idLike);
 }
