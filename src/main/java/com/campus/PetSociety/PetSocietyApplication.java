@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import com.campus.PetSociety.persistence.entity.*;
 import com.campus.PetSociety.web.exceptions.NotFoundException;
 import java.time.LocalDateTime;
+import java.util.List;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.ResponseEntity;
 
@@ -25,12 +26,18 @@ public class PetSocietyApplication {
         PostServiceImpl postService = context.getBean(PostServiceImpl.class);
         CommentServiceImpl commentService = context.getBean(CommentServiceImpl.class);
         LikeServiceImpl likeService = context.getBean(LikeServiceImpl.class); // Obtener el servicio de likes
+        FollowerGroupServiceImpl followerGroupService = context.getBean(FollowerGroupServiceImpl.class);
+        
 
         // Crear Usuario
         CreateUserDto userDto = new CreateUserDto("pancho", "pancho05", "pancho05@gmail.com", "12345");
         ResponseEntity<UserDto> userResponse = userService.createUser(userDto);
         UserDto createdUser = userResponse.getBody();
-
+        
+        
+        CreateUserDto userDto2 = new CreateUserDto("lucho", "lucho09", "lucho09@gmail.com", "54321");
+        ResponseEntity<UserDto> userResponse2 = userService.createUser(userDto2);
+        UserDto createdUser2 = userResponse2.getBody();
         // Actualizar foto y biografía del usuario
         userService.updatePhoto(createdUser.getPhoto(), "fotico");
         userService.updateBiography(createdUser.getEmail(), "nueva biografia");
@@ -74,6 +81,37 @@ public class PetSocietyApplication {
 //        System.out.println("Post creado: " + createdPost);
 //        System.out.println("Comentario creado: " + createdComment);
 //        System.out.println("Like creado: " + createdLikePost);
+
+
+        // Crear FollowerGroup
+        CreateFollowerGroupDto createFollowerGroupDto = new CreateFollowerGroupDto();
+        ResponseEntity<FollowerGroupDto> followerGroupResponse = followerGroupService.followUser(createdUser.getEmail(), createdUser2.getEmail());
+        System.out.println("FollowerGroup creado: " + followerGroupResponse);
+
+        // Obtener Followeds
+        List<UserDto> followeds = followerGroupService.getFolloweds(createdUser.getEmail());
+        System.out.println("Followeds: " + followeds);
+
+        // Obtener Followers
+        List<UserDto> followers = followerGroupService.getFollowers(createdUser2.getEmail());
+        System.out.println("Followers: " + followers);
+        
+        
+        
+        
+        
+       
+        // Usuario 1 deja de seguir a Usuario 2
+        try {
+            followerGroupService.unfollowUser(createdUser.getEmail(), createdUser2.getEmail());
+            System.out.println("Usuario dejó de seguir con éxito.");
+        } catch (NotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+
+        // Verificar que Usuario 1 ya no sigue a Usuario 2
+        List<UserDto> followedsAfterUnfollow = followerGroupService.getFolloweds(createdUser.getEmail());
+        System.out.println("Followeds después de dejar de seguir: " + followedsAfterUnfollow);
 
     }
 

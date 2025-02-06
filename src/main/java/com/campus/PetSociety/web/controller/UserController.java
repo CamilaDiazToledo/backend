@@ -54,7 +54,7 @@ public class UserController {
     }
 
     //UPDATE
-    @PatchMapping("/update/photo/{email}")
+    @PatchMapping("/update/photo/")
     public ResponseEntity<String> updatePhoto(@PathVariable String email, @RequestParam String photo) {
         Boolean updated = userServiceimpl.updatePhoto(email, photo);
 
@@ -79,7 +79,7 @@ public class UserController {
 
     @PatchMapping("/update/all/{email}")
     public ResponseEntity<String> updateAll(
-            @PathVariable String email, @RequestParam String newEmail,
+            @PathVariable String email,
             @RequestParam String fullName, @RequestParam String newPhoto,
             @RequestParam String newBiography) {
 

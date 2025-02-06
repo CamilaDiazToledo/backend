@@ -9,11 +9,14 @@ import com.campus.PetSociety.dto.CreateLikeCommentDto;
 import com.campus.PetSociety.dto.CreateLikePostDto;
 import com.campus.PetSociety.dto.LikeCommentDto;
 import com.campus.PetSociety.dto.LikePostDto;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import java.util.Date;
@@ -42,29 +45,26 @@ public class Likes {
     @Temporal(TemporalType.TIMESTAMP)
     private Date reactionDate;
     
+    @OneToOne(mappedBy = "idLike", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Notify notification;
+    
     // ----------------- CONSTRUCTORES
     public Likes() {
     }
 
-    public Likes(Users idUser, Post idPost) {
-        this.idUser = idUser;
-        this.idPost = idPost;
-    }
-    
-    
-    
-    public Likes(Long idLike, Users idUser, Post idPost, Comment idComment, Date reactionDate) {
+    public Likes(Long idLike, Users idUser, Post idPost, Comment idComment, Date reactionDate, Notify notification) {
         this.idLike = idLike;
         this.idUser = idUser;
         this.idPost = idPost;
         this.idComment = idComment;
         this.reactionDate = reactionDate;
+        this.notification = notification;
     }
-    
     
     // ----------------- GETTER & SETTER
     public Long getIdLike() {
         return idLike;
+
     }
 
     public void setIdLike(Long idLike) {
@@ -103,14 +103,22 @@ public class Likes {
         this.reactionDate = reactionDate;
     }
 
-    // ----------------- DTOS 
+    public Notify getNotification() {
+        return notification;
+    }
+
+    
+    public void setNotification(Notify notification) {
+        this.notification = notification;
+    }
+
+    // ----------------- DTOS
     public CreateLikePostDto toDTOCreateLikePost() {
         CreateLikePostDto createLikePostDto = new CreateLikePostDto();
         createLikePostDto.setEmailUser(this.idUser.getEmail());
         createLikePostDto.setIdPost(this.idPost.getIdPost());
         
         return createLikePostDto;
-
     }
     
     public  static  Likes fromDTOCreateLikePost( CreateLikePostDto createLikePostDto , Users userEntity, Post postEntity){

@@ -15,6 +15,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import java.util.ArrayList;
@@ -49,6 +50,9 @@ public class Comment {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateAt;
     
+    @OneToOne(mappedBy = "idComment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Notify notification;
+    
     // ----------------- LISTAS
     @OneToMany(mappedBy = "idComment", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Likes> likes = new ArrayList<>();
@@ -58,16 +62,18 @@ public class Comment {
     public Comment() {
     }
 
-    public Comment(Long idComment, Users idUser, Post idPost, String content, Date createdAt, Date updateAt) {
+    public Comment(Long idComment, Users idUser, Post idPost, String content, Date createdAt, Date updateAt, Notify notification) {
         this.idComment = idComment;
         this.idUser = idUser;
         this.idPost = idPost;
         this.content = content;
         this.createdAt = createdAt;
         this.updateAt = updateAt;
+        this.notification = notification;
     }
-    
+
     // ----------------- GETTER & SETTER
+
     public Long getIdComment() {
         return idComment;
     }
@@ -115,6 +121,23 @@ public class Comment {
     public void setUpdateAt(Date updateAt) {
         this.updateAt = updateAt;
     }
+
+    public Notify getNotification() {
+        return notification;
+    }
+
+    public void setNotification(Notify notification) {
+        this.notification = notification;
+    }
+
+    public List<Likes> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(List<Likes> likes) {
+        this.likes = likes;
+    }
+    
     
 
     // ----------------- LIST FIXED   

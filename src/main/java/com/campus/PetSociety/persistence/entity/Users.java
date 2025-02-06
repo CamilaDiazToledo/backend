@@ -300,13 +300,14 @@ public class Users {
         user.setPassword(createUserDTO.getPassword());
         user.setActive(Boolean.TRUE);
         user.setCreationDate(new Date());
+        user.setBiography("New Biography");
         
         return  user;
     }
     
     public UserDto toDTO() {
         UserDto usersDTO = new UserDto();
-        usersDTO.setBiography("New Biography");
+        usersDTO.setBiography(this.biography);
         usersDTO.setCreationDate(this.creationDate);
         usersDTO.setUpdatedAt(this.updatedAt);
         usersDTO.setName(this.name);

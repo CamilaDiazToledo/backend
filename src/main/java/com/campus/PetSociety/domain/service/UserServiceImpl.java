@@ -154,6 +154,7 @@ public class UserServiceImpl implements UserService {
 
             Users user = userOpt.get();
             user.setLastLogin(new Date());
+            user.setActive(Boolean.TRUE);
 
             userRepositorty.save(user);
             System.out.println("LastLogin updated it");
@@ -237,13 +238,12 @@ public class UserServiceImpl implements UserService {
 
         if (user.getActive().equals(Boolean.TRUE)) {
             user.setActive(Boolean.FALSE);
-        } else {
-            user.setActive(Boolean.TRUE);
+            userRepositorty.save(user);
+
+            return true;
         }
 
-        userRepositorty.save(user);
-
-        return true;
+        return false;
     }
 
 }

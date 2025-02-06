@@ -21,10 +21,17 @@ import java.util.Date;
  */
 @Entity
 public class Notify {
-    
+    // ----------------- ATRIBUTOS
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idNotification;
+    
+     private Boolean readStatus;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date date;
+    
+    private Boolean opened;
     
     @OneToOne
     private Comment idComment;
@@ -32,16 +39,16 @@ public class Notify {
     @OneToOne
     private Likes idLike;
     
+    @OneToOne
+    private Post idPost;
+    
+    @OneToOne
+    private FollowerGroup idFollowerGroup;
+    
     @ManyToOne
     private Users idUser;
-    
-    private Boolean readStatus;
-    
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date date;
-    
-    private Boolean opened;
-
+ 
+    // ----------------- CONSTRUCTORES
     public Notify() {
     }
 
@@ -50,15 +57,24 @@ public class Notify {
         this.idUser = userId;
     }
 
-    public Notify(Long idNotification, Comment comment, Likes likeId, Users userId, Boolean readStatus, Date date, Boolean opened) {
+    public Notify(Long idNotification, Boolean readStatus, Date date, Boolean opened, Comment idComment, Likes idLike, Post idPost, FollowerGroup idFollowerGroup, Users idUser) {
         this.idNotification = idNotification;
-        this.idComment = comment;
-        this.idLike = likeId;
-        this.idUser = userId;
         this.readStatus = readStatus;
         this.date = date;
         this.opened = opened;
+        this.idComment = idComment;
+        this.idLike = idLike;
+        this.idPost = idPost;
+        this.idFollowerGroup = idFollowerGroup;
+        this.idUser = idUser;
     }
+
+    
+    
+    // ----------------- GETTER & SETTER
+
+    
+    // ----------------- DTOS 
 
     public Long getIdNotification() {
         return idNotification;
@@ -66,30 +82,6 @@ public class Notify {
 
     public void setIdNotification(Long idNotification) {
         this.idNotification = idNotification;
-    }
-
-    public Comment getIdComment() {
-        return idComment;
-    }
-
-    public void setIdComment(Comment idComment) {
-        this.idComment = idComment;
-    }
-
-    public Likes getIdLike() {
-        return idLike;
-    }
-
-    public void setIdLike(Likes idLike) {
-        this.idLike = idLike;
-    }
-
-    public Users getIdUser() {
-        return idUser;
-    }
-
-    public void setIdUser(Users idUser) {
-        this.idUser = idUser;
     }
 
     public Boolean getReadStatus() {
@@ -115,9 +107,46 @@ public class Notify {
     public void setOpened(Boolean opened) {
         this.opened = opened;
     }
-    
-    
 
+    public Comment getIdComment() {
+        return idComment;
+    }
+
+    public void setIdComment(Comment idComment) {
+        this.idComment = idComment;
+    }
+
+    public Likes getIdLike() {
+        return idLike;
+    }
+
+    public void setIdLike(Likes idLike) {
+        this.idLike = idLike;
+    }
+
+    public Post getIdPost() {
+        return idPost;
+    }
+
+    public void setIdPost(Post idPost) {
+        this.idPost = idPost;
+    }
+
+    public FollowerGroup getIdFollowerGroup() {
+        return idFollowerGroup;
+    }
+
+    public void setIdFollowerGroup(FollowerGroup idFollowerGroup) {
+        this.idFollowerGroup = idFollowerGroup;
+    }
+
+    public Users getIdUser() {
+        return idUser;
+    }
+
+    public void setIdUser(Users idUser) {
+        this.idUser = idUser;
+    }
     
 
     
