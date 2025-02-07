@@ -10,15 +10,24 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  *
  * @author camid
  */
-public interface FollowerGroupRepository extends JpaRepository<FollowerGroup, Long>{
-    
-    @Query("SELECT f FROM FollowerGroup f JOIN f.idFollower follower JOIN f.idFollowed followed WHERE follower.email = :followerEmail AND followed.email = :followedEmail")
-    Optional<FollowerGroup> findByFollowerEmailAndFollowedEmail(String followerEmail, String followedEmail);
+public interface FollowerGroupRepository extends JpaRepository<FollowerGroup, Long> {
+
+//    @Query("SELECT f FROM FollowerGroup f JOIN f.idFollower follower JOIN f.idFollowed followed WHERE follower.email = :followerEmail AND followed.email = :followedEmail")
+//    Optional<FollowerGroup> findByFollowerEmailAndFollowedEmail1(String followerEmail, String followedEmail);
+
+    @Query("SELECT fg FROM FollowerGroup fg "
+            + "JOIN fg.idFollower uf "
+            + "JOIN fg.idFollowed uf2 "
+            + "WHERE uf.email = :followerEmail AND uf2.email = :followedEmail")
+    Optional<FollowerGroup> findByFollowerEmailAndFollowedEmail(@Param("followerEmail") String followerEmail, @Param("followedEmail") String followedEmail);
+
+    Optional<FollowerGroup> findByIdFollowerAndIdFollowed(Users idFollower, Users idFollowed);
     
     @Query("SELECT f.idFollowed FROM FollowerGroup f JOIN f.idFollower follower WHERE follower.email = :followerEmail")
     List<Users> findFollowedByFollowerEmail(String followerEmail);

@@ -69,7 +69,6 @@ public class FollowerGroupServiceImpl implements FollowerGroupService {
 //            throw new ActionNotAllowed("Followers process failure: one or both users not found.");
 //        }
 //    }
-
     @Transactional
     @Override
     public ResponseEntity<FollowerGroupDto> followUser(String emailFollower, String emailFollowed) {
@@ -91,10 +90,9 @@ public class FollowerGroupServiceImpl implements FollowerGroupService {
             }
 
             CreateFollowerGroupDto followerGroupCreated1 = new CreateFollowerGroupDto(follower.getEmail(), followed.getEmail());
-            
-            
-            FollowerGroup followerGroupCreated = FollowerGroup.fromDTOCreate(followerGroupCreated1, follower,followed);
-            
+
+            FollowerGroup followerGroupCreated = FollowerGroup.fromDTOCreate(followerGroupCreated1, follower, followed);
+
             followerGroupCreated = followerGroupRespository.save(followerGroupCreated);
             return ResponseEntity.ok(followerGroupCreated.toDTO());
         } else {
@@ -112,13 +110,13 @@ public class FollowerGroupServiceImpl implements FollowerGroupService {
 
         if (follower.isPresent() && followed.isPresent()) {
 
-            Users notFollower = follower.get();
-            Users notFollowed = followed.get();
+            Optional<FollowerGroup> followToRemove = followerGroupRespository.findByIdFollowerAndIdFollowed(follower.get(), followed.get());
 
-            Optional<FollowerGroup> followToRemove = followerGroupRespository.findByFollowerEmailAndFollowedEmail(notFollower.getEmail(), notFollowed.getEmail());
-            FollowerGroup entityRemove = followToRemove.get();
             if (followToRemove.isPresent()) {
-                followerGroupRespository.delete(entityRemove);
+                followed.get().removeFollowed(followToRemove.get());
+                follower.get().removeFollowers(followToRemove.get());
+              followerGroupRespository.delete(followToRemove.get());
+                userRepositorty.save(   followed.get());
                 System.out.println("Follow removed successfully");
             }
         } else {

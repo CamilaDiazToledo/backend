@@ -101,17 +101,6 @@ public class PetSocietyApplication {
         
         
        
-        // Usuario 1 deja de seguir a Usuario 2
-        try {
-            followerGroupService.unfollowUser(createdUser.getEmail(), createdUser2.getEmail());
-            System.out.println("Usuario dejó de seguir con éxito.");
-        } catch (NotFoundException e) {
-            System.out.println(e.getMessage());
-        }
-
-        // Verificar que Usuario 1 ya no sigue a Usuario 2
-        List<UserDto> followedsAfterUnfollow = followerGroupService.getFolloweds(createdUser.getEmail());
-        System.out.println("Followeds después de dejar de seguir: " + followedsAfterUnfollow);
 
     }
 

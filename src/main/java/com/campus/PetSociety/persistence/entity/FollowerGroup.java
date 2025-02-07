@@ -30,10 +30,10 @@ public class FollowerGroup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idFG;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Users idFollower;//from
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Users idFollowed;//to 
 
     @Temporal(TemporalType.TIMESTAMP)
