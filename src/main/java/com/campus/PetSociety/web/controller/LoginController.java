@@ -39,6 +39,7 @@ public class LoginController {
         try {
             userServiceImpl.verifyEmailPassword(email, encryptedPass);
             userServiceImpl.updateLastLogin(email);
+            userServiceImpl.updateDeactive(email);
             String token = jwtAuthtenticationConfig.getJWTToken(email);
             LoginDto userLogin = new LoginDto(email, encryptedPass, token);
             return ResponseEntity.ok(userLogin);

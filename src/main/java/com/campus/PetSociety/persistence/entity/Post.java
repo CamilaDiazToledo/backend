@@ -51,7 +51,7 @@ public class Post {
     private Notify notification;
 
     // ----------------- LISTAS
-    @OneToMany(mappedBy = "idPost", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "idPost", cascade = CascadeType.ALL,  fetch = FetchType.EAGER)
     private List<Likes> likes = new ArrayList<>();
 
     @OneToMany(mappedBy = "idPost", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -194,7 +194,8 @@ public class Post {
         postDTO.setCreatedAt(this.createdAt);
         postDTO.setPhoto(this.photo);
         postDTO.setUpdateAt(this.updateAt);
-        
+        postDTO.setNameUser(this.idUser.getName());
+        postDTO.setPhotoUser(this.idUser.getPhoto());
         
         // Aquí convertimos la lista de Likes a LikeCommentDto
         List<LikePostDto> likePostDtoList = this.likes.stream()

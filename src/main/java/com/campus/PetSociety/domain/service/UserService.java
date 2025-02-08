@@ -27,4 +27,5 @@ public interface UserService {
     Boolean updateAll(String email, String fullName, String newPhoto, String newBiography);
     Boolean updateBiography(String email,String biography);
     Boolean updateActive(String email);
+    Boolean updateDeactive(String email);
 }

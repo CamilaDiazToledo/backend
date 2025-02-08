@@ -18,5 +18,6 @@ public interface PostService {
     ResponseEntity<PostDto>createPost(CreatePostDto createPostDto);
     ResponseEntity<Void>deletePost(Long postId);
     Boolean updateDescription(Long id,String description);
+    List<PostDto> getPostsByFollowerEmail(String email);
     
 }

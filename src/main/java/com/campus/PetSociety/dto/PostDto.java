@@ -14,7 +14,9 @@ import java.util.List;
 public class PostDto {
     
     private Long postId;
+    private String nameUser;
     private String emailUser;
+    private String photoUser;
     private String description;
     private String photo;
     private Date createdAt;
@@ -26,9 +28,11 @@ public class PostDto {
     public PostDto() {
     }
 
-    public PostDto(Long postId, String emailUser, String description, String photo, Date createdAt, Date updateAt, List<LikePostDto> likePostDto, List<CommentDto> commentDto) {
+    public PostDto(Long postId, String nameUser, String emailUser, String photoUser, String description, String photo, Date createdAt, Date updateAt, List<LikePostDto> likePostDto, List<CommentDto> commentDto) {
         this.postId = postId;
+        this.nameUser = nameUser;
         this.emailUser = emailUser;
+        this.photoUser = photoUser;
         this.description = description;
         this.photo = photo;
         this.createdAt = createdAt;
@@ -45,12 +49,28 @@ public class PostDto {
         this.postId = postId;
     }
 
+    public String getNameUser() {
+        return nameUser;
+    }
+
+    public void setNameUser(String nameUser) {
+        this.nameUser = nameUser;
+    }
+
     public String getEmailUser() {
         return emailUser;
     }
 
     public void setEmailUser(String emailUser) {
         this.emailUser = emailUser;
+    }
+
+    public String getPhotoUser() {
+        return photoUser;
+    }
+
+    public void setPhotoUser(String photoUser) {
+        this.photoUser = photoUser;
     }
 
     public String getDescription() {
@@ -101,10 +121,5 @@ public class PostDto {
         this.commentDto = commentDto;
     }
 
-    
-    
-    
 
-    
-    
 }

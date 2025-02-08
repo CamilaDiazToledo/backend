@@ -14,6 +14,7 @@ public class UserDto {
     
     
     private String name;
+    private String userName;
     private String email;
     private String biography;
     private String photo;
@@ -42,6 +43,14 @@ public class UserDto {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getEmail() {
@@ -99,6 +108,8 @@ public class UserDto {
     public void setActive(Boolean active) {
         this.active = active;
     }
+
+    
 
     
     

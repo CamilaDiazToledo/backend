@@ -19,7 +19,7 @@ import org.springframework.data.repository.query.Param;
  */
 public interface CommentRepository extends JpaRepository<Comment, Long>{
     List<Comment> findByIdPost_IdPost(Long IdPost);
-    
+    List<Comment> findByIdPost(Post post);
     @Modifying
     @Transactional
     @Query("DELETE FROM Comment c WHERE c.idComment = :commentId")
@@ -27,5 +27,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long>{
     
     @Query("SELECT c FROM Comment c JOIN c.likes l WHERE l = :like")
     Optional<Comment> findCommentByLike(@Param("like") Likes like);
+    
+    
     
 }

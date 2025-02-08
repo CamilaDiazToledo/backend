@@ -19,7 +19,8 @@ import org.springframework.data.jpa.repository.Query;
 public interface LikeRespository extends JpaRepository<Likes, Long> {
 
     List<Likes> findByIdPost_IdPost(Long IdPost);
-
+    List<Likes> findByIdPost(Post post);
+    List<Likes> findByIdComment(Comment comment);
     List<Likes> findByIdComment_IdComment(Long IdComment);
 
     @Modifying

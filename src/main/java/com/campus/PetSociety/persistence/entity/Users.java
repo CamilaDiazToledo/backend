@@ -45,7 +45,8 @@ public class Users {
     private String password;
     
     private String biography;
-
+    
+    @Column(length = 1000)
     private String photo;
     
     @Temporal(TemporalType.TIMESTAMP)
@@ -315,6 +316,7 @@ public class Users {
         usersDTO.setPhoto(this.photo);
         usersDTO.setLastLogin(this.lastLogin);
         usersDTO.setActive(this.active); 
+        usersDTO.setUserName(this.userName);
         return usersDTO;
                 
         

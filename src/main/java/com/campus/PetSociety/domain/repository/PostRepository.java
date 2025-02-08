@@ -18,19 +18,29 @@ import org.springframework.data.repository.query.Param;
  *
  * @author camid
  */
-public interface PostRepository extends JpaRepository<Post, Long>{
-    
-    
-    @Query("SELECT p FROM Post p JOIN p.idUser u WHERE u.email = :email")
+public interface PostRepository extends JpaRepository<Post, Long> {
+
+    @Query("SELECT p FROM Post p JOIN p.idUser u WHERE u.email = :email ORDER BY p.createdAt DESC")
     List<Post> findByUserEmail(String email);
     
+
     @Modifying
     @Transactional
     @Query("DELETE FROM Post p WHERE p.idPost = :postId")
     void deletePostById(Long postId);
-   
     
     @Query("SELECT p FROM Post p JOIN p.likes l WHERE l = :like")
     Optional<Post> findPostByLike(@Param("like") Likes like);
-            
+
+    @Query("SELECT p FROM Post p "
+            + "JOIN p.idUser u "
+            + "JOIN FollowerGroup fg ON fg.idFollowed = u "
+            + "WHERE fg.idFollower.email = :email "
+            + "AND u.active = TRUE "
+            + "ORDER BY p.createdAt DESC")
+    List<Post> findPostsByFollowerEmail(@Param("email") String email);
+
+    
+    
+    
 }

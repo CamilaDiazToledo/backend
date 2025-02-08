@@ -59,6 +59,12 @@ public class PostController {
         return postServiceImpl.getAllPostByEmailUser(email);
     }
     
+    @GetMapping("/followed/{email}")
+    public List<PostDto> getFollowedPosts(@PathVariable String email) {
+        return postServiceImpl.getPostsByFollowerEmail(email);
+    }
+
+    
     //DELETE
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deletePost(@PathVariable Long id) {

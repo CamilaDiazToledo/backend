@@ -11,6 +11,7 @@ import com.campus.PetSociety.domain.repository.UserRepository;
 import com.campus.PetSociety.dto.CommentDto;
 import com.campus.PetSociety.dto.CreateCommentDto;
 import com.campus.PetSociety.persistence.entity.Comment;
+import com.campus.PetSociety.persistence.entity.Likes;
 import com.campus.PetSociety.persistence.entity.Post;
 import com.campus.PetSociety.persistence.entity.Users;
 import com.campus.PetSociety.web.exceptions.NotFoundException;
@@ -31,15 +32,14 @@ import org.springframework.stereotype.Service;
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
-    
+    private final LikeRespository likeRepositorty;
     private final UserRepository userRepositorty;
     private final PostRepository postRepositorty;
 
     @Autowired
-    public CommentServiceImpl(CommentRepository commentRepository, 
-                UserRepository userRepositorty, 
-                PostRepository postRepositorty) {
+    public CommentServiceImpl(CommentRepository commentRepository, LikeRespository likeRepositorty, UserRepository userRepositorty, PostRepository postRepositorty) {
         this.commentRepository = commentRepository;
+        this.likeRepositorty = likeRepositorty;
         this.userRepositorty = userRepositorty;
         this.postRepositorty = postRepositorty;
     }
@@ -89,20 +89,49 @@ public class CommentServiceImpl implements CommentService {
     }
 
 //DELETE.........................................................................
+//    @Transactional
+//    @Override
+//    public ResponseEntity<Void> deleteComment(Long commenttId) {
+//        System.out.println("Verificando si el comment con ID: " + commenttId + " existe.");
+//        if (commentRepository.existsById(commenttId)) {
+//            System.out.println("El comment existe. Procediendo a eliminar.");
+//            commentRepository.deleteCommentById(commenttId);
+//            System.out.println("Comment eliminado.");
+//            return ResponseEntity.noContent().build(); // 204 No Content
+//        } else {
+//            System.out.println("El comment con ID: " + commenttId + " no existe.");
+//            throw new NotFoundException("No post found");
+//        }
+//    
+//    }
+    
+    
     @Transactional
     @Override
     public ResponseEntity<Void> deleteComment(Long commenttId) {
         System.out.println("Verificando si el comment con ID: " + commenttId + " existe.");
         if (commentRepository.existsById(commenttId)) {
-            System.out.println("El comment existe. Procediendo a eliminar.");
-            commentRepository.deleteCommentById(commenttId);
+            System.out.println("El comment existe. Procediendo a eliminar dependencias.");
+            
+            Comment comment = commentRepository.findById(commenttId).get();
+            
+            Optional<Post> post = postRepositorty.findById(comment.getIdPost().getIdPost());
+            
+           
+            List<Likes> commentLikes  = likeRepositorty.findByIdComment(comment);
+            for (Likes like : commentLikes) {
+                comment.removeLikes(like);
+                }
+            likeRepositorty.deleteAll(commentLikes);
+            // Eliminar el post
+            post.get().removeComment(comment);
+            commentRepository.delete(comment);
             System.out.println("Comment eliminado.");
             return ResponseEntity.noContent().build(); // 204 No Content
         } else {
             System.out.println("El comment con ID: " + commenttId + " no existe.");
             throw new NotFoundException("No post found");
         }
-    
     }
     
 //UPDATE.........................................................................

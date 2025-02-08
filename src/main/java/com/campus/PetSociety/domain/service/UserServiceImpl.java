@@ -245,5 +245,25 @@ public class UserServiceImpl implements UserService {
 
         return false;
     }
+    
+    @Transactional
+    @Override
+    public Boolean updateDeactive(String email) {
+        Optional<Users> userOpt = userRepositorty.findByEmail(email);
+
+        if (!userOpt.isPresent()) {
+            throw new NotFoundException("User not found with email: " + email);
+        }
+        Users user = userOpt.get();
+
+        if (user.getActive().equals(Boolean.FALSE)) {
+            user.setActive(Boolean.TRUE);
+            userRepositorty.save(user);
+
+            return true;
+        }
+
+        return false;
+    }
 
 }
