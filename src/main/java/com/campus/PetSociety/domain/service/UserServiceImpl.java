@@ -10,6 +10,7 @@ import com.campus.PetSociety.persistence.entity.*;
 import com.campus.PetSociety.web.exceptions.DataInUseException;
 import com.campus.PetSociety.web.exceptions.*;
 import jakarta.transaction.Transactional;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -264,6 +265,25 @@ public class UserServiceImpl implements UserService {
         }
 
         return false;
+    }
+    
+    // Añadir el método getRandomUsersNotFollowedBy
+    @Transactional
+    @Override
+    public List<UserDto> getRandomUsersNotFollowedBy(String email) {
+        
+        Users user = userRepositorty.findByEmail(email).get();
+        
+        
+        List<Users> users = userRepositorty.findUsersNotFollowedBy(user);
+        if (users.isEmpty()) {
+            throw new NotFoundException("Users has not been foud");
+        }
+        Collections.shuffle(users); // Mezclar aleatoriamente la lista
+        return users.stream()
+                .limit(5)
+                .map(Users::toDTO)
+                .collect(Collectors.toList());          
     }
 
 }

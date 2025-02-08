@@ -52,6 +52,11 @@ public class UserController {
     public ResponseEntity<UserDto> getUserById(@PathVariable String email) {
         return userServiceimpl.getUserById(email);
     }
+    
+    @GetMapping("notfollowed/{email}")
+    public List<UserDto> getRandomUsersNotFollowedBy(@PathVariable String email){
+        return userServiceimpl.getRandomUsersNotFollowedBy(email);
+    }
 
     //UPDATE
     @PatchMapping("/update/photo/{email}")

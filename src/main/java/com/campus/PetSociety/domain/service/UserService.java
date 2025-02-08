@@ -7,6 +7,7 @@ package com.campus.PetSociety.domain.service;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import com.campus.PetSociety.dto.*;
+import com.campus.PetSociety.persistence.entity.Users;
 
 /**
  *
@@ -28,4 +29,5 @@ public interface UserService {
     Boolean updateBiography(String email,String biography);
     Boolean updateActive(String email);
     Boolean updateDeactive(String email);
+    List<UserDto> getRandomUsersNotFollowedBy(String email);
 }
