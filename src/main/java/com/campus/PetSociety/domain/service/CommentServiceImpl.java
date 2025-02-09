@@ -35,14 +35,18 @@ public class CommentServiceImpl implements CommentService {
     private final LikeRespository likeRepositorty;
     private final UserRepository userRepositorty;
     private final PostRepository postRepositorty;
-
+    private final NotifyServiceImpl notifyServiceImpl;
+    
     @Autowired
-    public CommentServiceImpl(CommentRepository commentRepository, LikeRespository likeRepositorty, UserRepository userRepositorty, PostRepository postRepositorty) {
+    public CommentServiceImpl(CommentRepository commentRepository, LikeRespository likeRepositorty, UserRepository userRepositorty, PostRepository postRepositorty, NotifyServiceImpl notifyServiceImpl) {
         this.commentRepository = commentRepository;
         this.likeRepositorty = likeRepositorty;
         this.userRepositorty = userRepositorty;
         this.postRepositorty = postRepositorty;
+        this.notifyServiceImpl = notifyServiceImpl;
     }
+    
+    
     
     
 
@@ -72,7 +76,8 @@ public class CommentServiceImpl implements CommentService {
         postEntity.addComment(comentcreated);
 
         comentcreated = commentRepository.save(comentcreated);
-
+        
+        notifyServiceImpl.createNotificationComment(comentcreated,postOptional.get().getIdUser() );
         return ResponseEntity.ok(comentcreated.toDTO());
 
     }

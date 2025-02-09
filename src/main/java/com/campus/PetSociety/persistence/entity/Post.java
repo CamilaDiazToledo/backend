@@ -47,8 +47,7 @@ public class Post {
 
     private String photo;
     
-    @OneToOne(mappedBy = "idPost", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Notify notification;
+    
 
     // ----------------- LISTAS
     @OneToMany(mappedBy = "idPost", cascade = CascadeType.ALL,  fetch = FetchType.EAGER)
@@ -61,15 +60,7 @@ public class Post {
     public Post() {
     }
 
-    public Post(Long idPost, Users idUser, String discription, Date createdAt, Date updateAt, String photo, Notify notification) {
-        this.idPost = idPost;
-        this.idUser = idUser;
-        this.discription = discription;
-        this.createdAt = createdAt;
-        this.updateAt = updateAt;
-        this.photo = photo;
-        this.notification = notification;
-    }
+    
     public Long getIdPost() {
         return idPost;
     }
@@ -118,13 +109,7 @@ public class Post {
         this.photo = photo;
     }
 
-    public Notify getNotification() {
-        return notification;
-    }
-
-    public void setNotification(Notify notification) {
-        this.notification = notification;
-    }
+    
 
     public List<Likes> getLikes() {
         return likes;

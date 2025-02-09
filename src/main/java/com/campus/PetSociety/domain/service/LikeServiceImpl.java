@@ -31,14 +31,17 @@ public class LikeServiceImpl implements LikeService {
     private final UserRepository userRepositorty;
     private final PostRepository postRepositorty;
     private final CommentRepository commentRepository;
-
+    private final NotifyServiceImpl notifyServiceImpl;
     @Autowired
-    public LikeServiceImpl(LikeRespository likeRepositorty, UserRepository userRepositorty, PostRepository postRepositorty, CommentRepository commentRepository) {
+    public LikeServiceImpl(LikeRespository likeRepositorty, UserRepository userRepositorty, PostRepository postRepositorty, CommentRepository commentRepository, NotifyServiceImpl notifyServiceImpl) {
         this.likeRepositorty = likeRepositorty;
         this.userRepositorty = userRepositorty;
         this.postRepositorty = postRepositorty;
         this.commentRepository = commentRepository;
+        this.notifyServiceImpl = notifyServiceImpl;
     }
+    
+    
 
 //CREATE......................................................................
     //like post
@@ -73,9 +76,11 @@ public class LikeServiceImpl implements LikeService {
 
         likecreated = likeRepositorty.save(likecreated);
         System.out.println("Like creado: " + likecreated);
-
+        notifyServiceImpl.createNotificationLike(likecreated,postEntity.getIdUser() );
         return ResponseEntity.ok(likecreated.toDTOLikePost());
     }
+
+    
 
     //like comment
     @Transactional
@@ -103,7 +108,7 @@ public class LikeServiceImpl implements LikeService {
         commentEntity.addLikes(likecreated);
 
         likecreated = likeRepositorty.save(likecreated);
-
+        notifyServiceImpl.createNotificationLike(likecreated,commentEntity.getIdUser());
         return ResponseEntity.ok(likecreated.toDTOLikeComment());
 
     }
@@ -171,4 +176,35 @@ public class LikeServiceImpl implements LikeService {
         return null;
 
     }
+    
+    //FIND
+//    @Transactional
+//    @Override
+//    public ResponseEntity<LikePostDto> findLikedPost(Long idPost, String email) {
+//        Optional<Users> usersOpt = userRepositorty.findByEmail(email);
+//        Optional<Post> postOpt = postRepositorty.findById(idPost);
+//        Optional<Likes> like = likeRepositorty.findByIdPostAndIdUser(postOpt.get(), usersOpt.get());
+//        if (like.isEmpty()) {
+//            throw new NotFoundException("No like found with this Id" + email +" and id post" + idPost );
+//        }
+//        return like.map(likes -> ResponseEntity.ok(likes.toDTOLikePost()))
+//                .orElse(ResponseEntity.notFound().build());
+//    }
+//    
+//    @Transactional
+//    @Override
+//    public ResponseEntity<LikeCommentDto> findLikedComment(Long idComment, String email) {
+//        Optional<Users> usersOpt = userRepositorty.findByEmail(email);
+//        Optional<Comment> commentOpt = commentRepository.findById(idComment);
+//        Optional<Likes> like = likeRepositorty.findByIdCommentAndIdUser(commentOpt.get(), usersOpt.get());
+//        if (like.isEmpty()) {
+//            throw new NotFoundException("No like found with this Id" + email+" and id comment" +idComment);
+//        }
+//        return like.map(likes -> ResponseEntity.ok(likes.toDTOLikeComment()))
+//                .orElse(ResponseEntity.notFound().build());
+//    }
+    
+    
+
+
 }

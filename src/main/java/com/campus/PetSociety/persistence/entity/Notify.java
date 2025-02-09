@@ -2,9 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 package com.campus.PetSociety.persistence.entity;
 
+import com.campus.PetSociety.dto.NotificationDto;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,75 +21,71 @@ import java.util.Date;
  */
 @Entity
 public class Notify {
+
     // ----------------- ATRIBUTOS
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idNotification;
-    
-     private Boolean readStatus;
-    
+
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;
-    
+
     private Boolean opened;
-    
+
     @OneToOne
-    private Comment idComment;
-    
+    private Comment comments;
+
     @OneToOne
-    private Likes idLike;
-    
+    private Likes likes;
+
+
     @OneToOne
-    private Post idPost;
-    
-    @OneToOne
-    private FollowerGroup idFollowerGroup;
-    
+    private FollowerGroup followerGroup;
+
     @ManyToOne
     private Users idUser;
- 
+
     // ----------------- CONSTRUCTORES
     public Notify() {
     }
 
-    public Notify(Likes likeId, Users userId) {
-        this.idLike = likeId;
-        this.idUser = userId;
+    public Notify(Comment idComment, Users idUser) {
+        this.comments = idComment;
+        this.idUser = idUser;
+        this.date = new Date();
+        this.opened = Boolean.FALSE;
+        
     }
 
-    public Notify(Long idNotification, Boolean readStatus, Date date, Boolean opened, Comment idComment, Likes idLike, Post idPost, FollowerGroup idFollowerGroup, Users idUser) {
-        this.idNotification = idNotification;
-        this.readStatus = readStatus;
+    public Notify(Likes likeId, Users userId) {
+        this.likes = likeId;
+        this.idUser = userId;
+        this.date = new Date();
+        this.opened = Boolean.FALSE;
+    }
+
+    public Notify(FollowerGroup idFollowerGroup, Users idUser) {
+        this.followerGroup = idFollowerGroup;
+        this.idUser = idUser;
+        this.date = new Date();
+        this.opened = Boolean.FALSE;
+    }
+    
+    
+    
+
+    public Notify(Date date, FollowerGroup idFollowerGroup, Users idUser) {
         this.date = date;
-        this.opened = opened;
-        this.idComment = idComment;
-        this.idLike = idLike;
-        this.idPost = idPost;
-        this.idFollowerGroup = idFollowerGroup;
+        this.followerGroup = idFollowerGroup;
         this.idUser = idUser;
     }
-
-    
-    
-    // ----------------- GETTER & SETTER
-
-    
-    // ----------------- DTOS 
-
     public Long getIdNotification() {
         return idNotification;
-    }
+
+    }    
 
     public void setIdNotification(Long idNotification) {
         this.idNotification = idNotification;
-    }
-
-    public Boolean getReadStatus() {
-        return readStatus;
-    }
-
-    public void setReadStatus(Boolean readStatus) {
-        this.readStatus = readStatus;
     }
 
     public Date getDate() {
@@ -108,47 +104,89 @@ public class Notify {
         this.opened = opened;
     }
 
-    public Comment getIdComment() {
-        return idComment;
+    public Comment getComments() {
+        return comments;
     }
 
-    public void setIdComment(Comment idComment) {
-        this.idComment = idComment;
+    public void setComments(Comment comments) {
+        this.comments = comments;
     }
 
-    public Likes getIdLike() {
-        return idLike;
+    public Likes getLikes() {
+        return likes;
     }
 
-    public void setIdLike(Likes idLike) {
-        this.idLike = idLike;
+    public void setLikes(Likes likes) {
+        this.likes = likes;
     }
 
-    public Post getIdPost() {
-        return idPost;
+    public FollowerGroup getFollowerGroup() {
+        return followerGroup;
     }
 
-    public void setIdPost(Post idPost) {
-        this.idPost = idPost;
-    }
-
-    public FollowerGroup getIdFollowerGroup() {
-        return idFollowerGroup;
-    }
-
-    public void setIdFollowerGroup(FollowerGroup idFollowerGroup) {
-        this.idFollowerGroup = idFollowerGroup;
+    public void setFollowerGroup(FollowerGroup followerGroup) {
+        this.followerGroup = followerGroup;
     }
 
     public Users getIdUser() {
         return idUser;
     }
 
-    public void setIdUser(Users idUser) {
+    // ----------------- GETTER & SETTER
+    public void setIdUser(Users idUser) { 
         this.idUser = idUser;
     }
+
+    // ----------------- DTOS 
+    public NotificationDto toDTO() {
+        NotificationDto notificationDto = new NotificationDto();
+
+        notificationDto.setIdNotification(this.idNotification);
+        notificationDto.setDate(this.date);
+        notificationDto.setEmailRecipient(this.idUser.getEmail());
+        notificationDto.setStatus(this.opened);
+        
+//        notificationDto.setUserPhoto(this.idUser.getPhoto());
+//        notificationDto.setName(this.idUser.getName());
+//        notificationDto.setUsername(this.idUser.getUserName());
+
+
+// Determinar el tipo de notificación y asignar los valores correspondientes
+if (this.followerGroup != null) {
+    notificationDto.setTipo("Follow");
+    notificationDto.setIdFollow(this.followerGroup.getIdFG());
+    notificationDto.setEmail(this.followerGroup.getIdFollower().getEmail());
+    notificationDto.setUserPhoto(this.followerGroup.getIdFollower().getPhoto());
+    notificationDto.setUsername(this.followerGroup.getIdFollower().getUserName());
+    notificationDto.setName(this.followerGroup.getIdFollower().getName());
+} else if (this.likes != null) {
+    notificationDto.setTipo("Like");
+    notificationDto.setIdLike(this.likes.getIdLike());
+    notificationDto.setEmail(this.likes.getIdUser().getEmail());
+    notificationDto.setUserPhoto(this.likes.getIdUser().getPhoto());
+    notificationDto.setUsername(this.likes.getIdUser().getUserName());
+    notificationDto.setName(this.likes.getIdUser().getName());
+} else if (this.comments != null) {
+    notificationDto.setTipo("Comment");
+    notificationDto.setIdComment(this.comments.getIdComment());
+    notificationDto.setEmail(this.comments.getIdUser().getEmail());
+    notificationDto.setUserPhoto(this.comments.getIdUser().getPhoto());
+    notificationDto.setUsername(this.comments.getIdUser().getUserName());
+    notificationDto.setName(this.comments.getIdUser().getName());
+}
+
+
+
+return notificationDto;
+    }
+    
+    
+    
+    
+    
     
 
-    
-    
 }
+
+
+

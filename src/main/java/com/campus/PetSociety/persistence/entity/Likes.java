@@ -45,7 +45,7 @@ public class Likes {
     @Temporal(TemporalType.TIMESTAMP)
     private Date reactionDate;
     
-    @OneToOne(mappedBy = "idLike", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "likes", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Notify notification;
     
     // ----------------- CONSTRUCTORES

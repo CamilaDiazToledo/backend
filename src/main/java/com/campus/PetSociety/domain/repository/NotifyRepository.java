@@ -11,23 +11,19 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  *
  * @author camid
  */
-public interface LikeRespository extends JpaRepository<Likes, Long> {
+public interface NotifyRepository extends JpaRepository<Notify, Long> {
 
-    List<Likes> findByIdPost_IdPost(Long IdPost);
-    List<Likes> findByIdPost(Post post);
-    List<Likes> findByIdComment(Comment comment);
-    List<Likes> findByIdComment_IdComment(Long IdComment);
-    Optional<Likes> findByIdPostAndIdUser(Post idPost, Users idUser);
-    Optional<Likes> findByIdCommentAndIdUser(Comment idComment, Users idUser);
-
-    @Modifying
+    @Query("SELECT n FROM Notify n JOIN n.idUser u WHERE u.email = :email")
+    List<Notify> findByToUserEmail(@Param("email") String email);
+    Optional<Notify> findNotifyByFollowerGroupAndIdUser(FollowerGroup followerGroup, Users idUser);
+     @Modifying
     @Transactional
-    @Query("DELETE FROM Likes l WHERE l.idLike = :likeId")
-    int deleteLikeById(Long likeId);
-
+    @Query("DELETE FROM Notify n WHERE n.followerGroup = :follow AND n.idUser = :user")
+    void deleteNotifyByFollowerGroupAndIdUser(@Param("follow") FollowerGroup follow, @Param("user") Users user);
 }

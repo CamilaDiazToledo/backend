@@ -50,6 +50,8 @@ public class UserController {
 
     @GetMapping("/{email}")
     public ResponseEntity<UserDto> getUserById(@PathVariable String email) {
+        System.out.println("se va a imprimir");
+        System.out.println(userServiceimpl.getUserById(email));
         return userServiceimpl.getUserById(email);
     }
     

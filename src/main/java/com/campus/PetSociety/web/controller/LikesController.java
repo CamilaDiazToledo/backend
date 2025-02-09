@@ -73,6 +73,18 @@ public class LikesController {
         return likeServiceImpl.getAllLikeByIdComment(idComment);
     }
     
+//    //FIND LIKEPOST
+//    @GetMapping("/all/findlikepost/{idPost}/{email}")
+//    public ResponseEntity<LikePostDto> findLikedPost(@PathVariable Long idPost, @PathVariable String email) {
+//        return likeServiceImpl.findLikedPost(idPost, email);
+//    }
+//    
+//    //FIND LIKECOMMENT
+//    @GetMapping("/all/findlikecomment/{idComment}/{email}")
+//    public ResponseEntity<LikeCommentDto> findLikedComment(Long idComment, String email) {
+//        return likeServiceImpl.findLikedComment(idComment, email);
+//    }
+    
     //DELETE
     @DeleteMapping("/delete/likepost/{id}")
     public ResponseEntity<Void> deleteLike(@PathVariable Long id){

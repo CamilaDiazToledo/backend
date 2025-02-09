@@ -50,7 +50,7 @@ public class Comment {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateAt;
     
-    @OneToOne(mappedBy = "idComment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "comments", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Notify notification;
     
     // ----------------- LISTAS
@@ -177,7 +177,7 @@ public class Comment {
     public CommentDto toDTO() {
         CommentDto commentDto = new CommentDto();
         commentDto.setIdComment(this.idComment);
-        commentDto.setIdUser(this.idUser.getIdUser());
+        commentDto.setEmailUser(this.idUser.getEmail());
         commentDto.setIdPost(this.idPost.getIdPost());
         commentDto.setContent(this.content);
         commentDto.setCreatedAt(this.createdAt);

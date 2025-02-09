@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class CommentDto {
     private Long idComment;
-    private Long idUser;
+    private String emailUser;
     private Long idPost;
     private String content;
     private Date createdAt;
@@ -25,9 +25,9 @@ public class CommentDto {
     public CommentDto() {
     }
 
-    public CommentDto(Long idComment, Long idUser, Long idPost, String content, Date createdAt, Date updateAt, String userName, String userPhoto, List<LikeCommentDto> likeCommentDto) {
+    public CommentDto(Long idComment, String emailUser, Long idPost, String content, Date createdAt, Date updateAt, String userName, String userPhoto, List<LikeCommentDto> likeCommentDto) {
         this.idComment = idComment;
-        this.idUser = idUser;
+        this.emailUser = emailUser;
         this.idPost = idPost;
         this.content = content;
         this.createdAt = createdAt;
@@ -45,12 +45,12 @@ public class CommentDto {
         this.idComment = idComment;
     }
 
-    public Long getIdUser() {
-        return idUser;
+    public String getEmailUser() {
+        return emailUser;
     }
 
-    public void setIdUser(Long idUser) {
-        this.idUser = idUser;
+    public void setEmailUser(String emailUser) {
+        this.emailUser = emailUser;
     }
 
     public Long getIdPost() {
@@ -108,6 +108,9 @@ public class CommentDto {
     public void setLikeCommentDto(List<LikeCommentDto> likeCommentDto) {
         this.likeCommentDto = likeCommentDto;
     }
+
+    
+    
 
    
     

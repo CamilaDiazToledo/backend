@@ -38,8 +38,8 @@ public class FollowerGroup {
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;
-
-    @OneToOne(mappedBy = "idFollowerGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    
+    @OneToOne(mappedBy = "followerGroup", cascade = CascadeType.ALL, orphanRemoval = true)
     private Notify notification;
 
     // ----------------- CONSTRUCTORES

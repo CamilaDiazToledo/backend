@@ -6,6 +6,7 @@ package com.campus.PetSociety.domain.service;
 
 import ch.qos.logback.core.joran.spi.ActionException;
 import com.campus.PetSociety.domain.repository.FollowerGroupRepository;
+import com.campus.PetSociety.domain.repository.NotifyRepository;
 import com.campus.PetSociety.domain.repository.UserRepository;
 import com.campus.PetSociety.dto.CreateFollowerGroupDto;
 import com.campus.PetSociety.dto.FollowerGroupDto;
@@ -28,14 +29,18 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class FollowerGroupServiceImpl implements FollowerGroupService {
-
+    
     private final UserRepository userRepositorty;
     private final FollowerGroupRepository followerGroupRespository;
-
+    private final NotifyServiceImpl notifyServiceImpl;
+    private final NotifyRepository notifyRepository;
+    
     @Autowired
-    public FollowerGroupServiceImpl(UserRepository userRepositorty, FollowerGroupRepository followerGroupRespository) {
+    public FollowerGroupServiceImpl(UserRepository userRepositorty, FollowerGroupRepository followerGroupRespository, NotifyServiceImpl notifyServiceImpl, NotifyRepository notifyRepository) {
         this.userRepositorty = userRepositorty;
         this.followerGroupRespository = followerGroupRespository;
+        this.notifyServiceImpl = notifyServiceImpl;
+        this.notifyRepository = notifyRepository;
     }
 
 //CREATE......................................................................
@@ -73,14 +78,14 @@ public class FollowerGroupServiceImpl implements FollowerGroupService {
     @Override
     public ResponseEntity<FollowerGroupDto> followUser(String emailFollower, String emailFollowed) {
         System.out.println("Intentando seguir. Follower: " + emailFollower + ", Followed: " + emailFollowed);
-
+        
         Optional<Users> possibleFollower = userRepositorty.findByEmail(emailFollower);
         Optional<Users> possibleFollowed = userRepositorty.findByEmail(emailFollowed);
-
+        
         if (possibleFollower.isPresent() && possibleFollowed.isPresent()) {
             Users follower = possibleFollower.get();
             Users followed = possibleFollowed.get();
-
+            
             System.out.println("Follower encontrado: " + follower.getEmail() + ", Followed encontrado: " + followed.getEmail());
 
             // Verificación adicional
@@ -88,12 +93,13 @@ public class FollowerGroupServiceImpl implements FollowerGroupService {
                 System.out.println("El usuario está tratando de seguirse a sí mismo. Acción no permitida.");
                 throw new ActionNotAllowed("A user cannot follow themselves.");
             }
-
+            
             CreateFollowerGroupDto followerGroupCreated1 = new CreateFollowerGroupDto(follower.getEmail(), followed.getEmail());
-
+            
             FollowerGroup followerGroupCreated = FollowerGroup.fromDTOCreate(followerGroupCreated1, follower, followed);
-
+            
             followerGroupCreated = followerGroupRespository.save(followerGroupCreated);
+            notifyServiceImpl.createNotificationFollow(followerGroupCreated, followed);
             return ResponseEntity.ok(followerGroupCreated.toDTO());
         } else {
             System.out.println("Uno o ambos usuarios no fueron encontrados. Proceso de seguimiento fallido.");
@@ -107,22 +113,23 @@ public class FollowerGroupServiceImpl implements FollowerGroupService {
     public void unfollowUser(String emailFollower, String emailFollowed) {
         Optional<Users> follower = userRepositorty.findByEmail(emailFollower);
         Optional<Users> followed = userRepositorty.findByEmail(emailFollowed);
-
+        
         if (follower.isPresent() && followed.isPresent()) {
-
+            
             Optional<FollowerGroup> followToRemove = followerGroupRespository.findByIdFollowerAndIdFollowed(follower.get(), followed.get());
-
+            
             if (followToRemove.isPresent()) {
+                notifyServiceImpl.deleteNotify(followToRemove.get(), followed.get());
                 followed.get().removeFollowed(followToRemove.get());
                 follower.get().removeFollowers(followToRemove.get());
-              followerGroupRespository.delete(followToRemove.get());
-                userRepositorty.save(   followed.get());
+                followerGroupRespository.delete(followToRemove.get());
+                userRepositorty.save(followed.get());
                 System.out.println("Follow removed successfully");
             }
         } else {
             throw new NotFoundException("Followed or follower user not found");
         }
-
+        
     }
 
 //GET.........................................................................
@@ -139,10 +146,10 @@ public class FollowerGroupServiceImpl implements FollowerGroupService {
                 user.getUpdatedAt(), user.getActive()))
                 .collect(Collectors.toList());
     }
-
+    
     @Override
     public List<UserDto> getFollowers(String emailFollowed) {
-
+        
         List<Users> followerUsers = followerGroupRespository.findFollowerByFollowedEmail(emailFollowed);
 
         // Transformar la lista de Users a UserDto
@@ -153,5 +160,5 @@ public class FollowerGroupServiceImpl implements FollowerGroupService {
                 user.getUpdatedAt(), user.getActive()))
                 .collect(Collectors.toList());
     }
-
+    
 }

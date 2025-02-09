@@ -42,6 +42,7 @@ public class LoginController {
             userServiceImpl.updateDeactive(email);
             String token = jwtAuthtenticationConfig.getJWTToken(email);
             LoginDto userLogin = new LoginDto(email, encryptedPass, token);
+            System.out.println(userLogin);
             return ResponseEntity.ok(userLogin);
             
         } catch (NotFoundException e) {
