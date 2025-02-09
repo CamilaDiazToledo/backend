@@ -130,6 +130,7 @@ public class CommentServiceImpl implements CommentService {
             likeRepositorty.deleteAll(commentLikes);
             // Eliminar el post
             post.get().removeComment(comment);
+            notifyServiceImpl.deleteNotifyComment(commenttId);
             commentRepository.delete(comment);
             System.out.println("Comment eliminado.");
             return ResponseEntity.noContent().build(); // 204 No Content

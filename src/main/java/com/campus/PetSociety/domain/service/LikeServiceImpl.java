@@ -144,8 +144,11 @@ public class LikeServiceImpl implements LikeService {
             System.out.println("El like existe. Procediendo a eliminar.");
             Likes like = likeRepositorty.findById(idLike).get();
             Post post = postRepositorty.findPostByLike(like).get();
+            notifyServiceImpl.deleteNotifyLike(idLike);
             post.removeLikes(like);
+            
             postRepositorty.save(post);
+            
             likeRepositorty.deleteLikeById(like.getIdLike());
 
         } else {
@@ -165,8 +168,10 @@ public class LikeServiceImpl implements LikeService {
             System.out.println("El like existe. Procediendo a eliminar.");
             Likes like = likeRepositorty.findById(idLike).get();
             Comment comment = commentRepository.findCommentByLike(like).get();
+            notifyServiceImpl.deleteNotifyLike(idLike);
             comment.removeLikes(like);
             commentRepository.save(comment);
+            
             likeRepositorty.deleteLikeById(like.getIdLike());
 
         } else {

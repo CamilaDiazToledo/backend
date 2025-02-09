@@ -119,15 +119,59 @@ public class NotifyServiceImpl implements NotifyService {
 //    }
     @Transactional
     @Override
-    public void deleteNotify(FollowerGroup follow, Users user) {
-        Optional<Notify> notification = notifyRepository.findNotifyByFollowerGroupAndIdUser(follow, user);
-        if (notification.isEmpty()) {
-            throw new NotFoundException("Notification not found for the given follower group and user.");
+    public void deleteNotifyFollow(Long idFollow) {
+        System.out.println("Buscando notificación con followerGroupId: " + idFollow);
+        List<Notify> notifications = notifyRepository.findByFollowerGroupId(idFollow);
+
+        if (notifications.isEmpty()) {
+            System.out.println("La notificación no existe en la base de datos.");
+            return;
         }
 
-        Notify notificationToDelete = notification.get();
-        notifyRepository.delete(notificationToDelete);
+        notifications.forEach(n -> System.out.println("Notificación encontrada: " + n));
+        notifications.forEach(n -> n.setFollowerGroup(null));
+        notifications.forEach(n -> n.setIdUser(null));
+        
+        notifyRepository.deleteAll(notifications);
     }
+    
+    @Transactional
+    @Override
+    public void deleteNotifyLike(Long idLike) {
+        System.out.println("Buscando notificación con followerGroupId: " + idLike);
+        List<Notify> notifications = notifyRepository.findByLikeId(idLike);
+
+        if (notifications.isEmpty()) {
+            System.out.println("La notificación no existe en la base de datos.");
+            return;
+        }
+
+        notifications.forEach(n -> System.out.println("Notificación encontrada: " + n));
+        notifications.forEach(n -> n.setLikes(null));
+        notifications.forEach(n -> n.setIdUser(null));
+        
+        notifyRepository.deleteAll(notifications);
+    }
+    
+    @Transactional
+    @Override
+    public void deleteNotifyComment(Long idComment) {
+        System.out.println("Buscando notificación con followerGroupId: " + idComment);
+        List<Notify> notifications = notifyRepository.findByCommentId(idComment);
+
+        if (notifications.isEmpty()) {
+            System.out.println("La notificación no existe en la base de datos.");
+            return;
+        }
+
+        notifications.forEach(n -> System.out.println("Notificación encontrada: " + n));
+        notifications.forEach(n -> n.setComments(null));
+        notifications.forEach(n -> n.setIdUser(null));
+        
+        notifyRepository.deleteAll(notifications);
+    }
+    
+    
 
     @Transactional
     @Override

@@ -21,9 +21,15 @@ public interface NotifyRepository extends JpaRepository<Notify, Long> {
 
     @Query("SELECT n FROM Notify n JOIN n.idUser u WHERE u.email = :email")
     List<Notify> findByToUserEmail(@Param("email") String email);
-    Optional<Notify> findNotifyByFollowerGroupAndIdUser(FollowerGroup followerGroup, Users idUser);
-     @Modifying
-    @Transactional
-    @Query("DELETE FROM Notify n WHERE n.followerGroup = :follow AND n.idUser = :user")
-    void deleteNotifyByFollowerGroupAndIdUser(@Param("follow") FollowerGroup follow, @Param("user") Users user);
+
+    
+
+    @Query("SELECT n FROM Notify n WHERE n.followerGroup.idFG = :idFG")
+    List<Notify> findByFollowerGroupId(@Param("idFG") Long idFG);
+
+    @Query("SELECT n FROM Notify n WHERE n.likes.idLike = :idLike")
+    List<Notify> findByLikeId(@Param("idLike") Long idLike);
+    
+    @Query("SELECT n FROM Notify n WHERE n.comments.idComment = :idComment")
+    List<Notify> findByCommentId(@Param("idComment") Long idComment);
 }

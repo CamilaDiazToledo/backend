@@ -14,12 +14,14 @@ import org.springframework.http.ResponseEntity;
  * @author camid
  */
 public interface NotifyService {
-
     ResponseEntity<NotificationDto> createNotificationFollow(FollowerGroup follow, Users user);
     ResponseEntity<NotificationDto> createNotificationLike(Likes like, Users user);
     ResponseEntity<NotificationDto> createNotificationComment(Comment comment, Users user);
     List<NotificationDto> getUserNotifications(String email);
     void updateOpened(Long idNotification);
     void updateOpened1(Long idNotification);
-    void deleteNotify(FollowerGroup follow,Users user);
+    void deleteNotifyFollow(Long idFollow);
+    void deleteNotifyLike(Long idLike);
+    void deleteNotifyComment(Long idComment);
 }
+
