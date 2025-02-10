@@ -12,6 +12,7 @@ import com.campus.PetSociety.dto.CreatePostDto;
 import com.campus.PetSociety.dto.PostDto;
 import com.campus.PetSociety.persistence.entity.Post;
 import com.campus.PetSociety.persistence.entity.*;
+import com.campus.PetSociety.web.exceptions.CreationException;
 import com.campus.PetSociety.web.exceptions.NotFoundException;
 import jakarta.transaction.Transactional;
 import java.util.Date;
@@ -35,12 +36,12 @@ public class PostServiceImpl implements PostService {
     private final LikeRespository likeRepositorty;
 
     @Autowired
-     public PostServiceImpl(PostRepository postRepositorty, UserRepository userRepositorty, CommentRepository commentRepository, LikeRespository likeRepositorty) {
+    public PostServiceImpl(PostRepository postRepositorty, UserRepository userRepositorty, CommentRepository commentRepository, LikeRespository likeRepositorty) {
         this.postRepositorty = postRepositorty;
         this.userRepositorty = userRepositorty;
         this.commentRepository = commentRepository;
         this.likeRepositorty = likeRepositorty;
-    }   
+    }
 //CREATE......................................................................
 
     @Transactional
@@ -50,18 +51,22 @@ public class PostServiceImpl implements PostService {
         Optional<Users> userOptional = userRepositorty.findByEmail(createPostDto.getEmailUser());
 
         if (!userOptional.isPresent()) {
-            throw new NotFoundException("User not found with id: " + createPostDto.getEmailUser());
+            throw new NotFoundException("User not found with email: " + createPostDto.getEmailUser());
         }
 
         Users userEntity = userOptional.get();
         Post postcreated = Post.fromDTOCreate(createPostDto, userEntity);
         postcreated.setIdUser(userEntity); // Asignar el usuario encontrado al post
-        userEntity.addPost(postcreated);
-        postcreated = postRepositorty.save(postcreated);
+
+        try {
+            userEntity.addPost(postcreated);
+            postcreated = postRepositorty.save(postcreated);
+        } catch (Exception e) {
+            throw new CreationException("Error creating post for user: " + userEntity.getEmail());
+        }
+
         return ResponseEntity.ok(postcreated.toDTO());
     }
-
-    
 
 //GET.........................................................................
     // todos
@@ -118,30 +123,30 @@ public class PostServiceImpl implements PostService {
         System.out.println("Verificando si el post con ID: " + postId + " existe.");
         if (postRepositorty.existsById(postId)) {
             System.out.println("El post existe. Procediendo a eliminar dependencias.");
-            
+
             Post post = postRepositorty.findById(postId).get();
-            
+
             Optional<Users> user = userRepositorty.findByEmail(post.getIdUser().getEmail());
-            
+
             // Eliminar comentarios asociados y sus likes
             List<Comment> comments = commentRepository.findByIdPost(post);
             for (Comment comment : comments) {
                 // Eliminar likes de cada comentario
                 List<Likes> commentLikes = likeRepositorty.findByIdComment(comment);
                 for (Likes like : commentLikes) {
-                comment.removeLikes(like);
+                    comment.removeLikes(like);
                 }
-                
-                likeRepositorty.deleteAll(commentLikes); 
+
+                likeRepositorty.deleteAll(commentLikes);
                 post.removeComment(comment);
             }
             // Eliminar comentario
             commentRepository.deleteAll(comments);
             // Eliminar likes asociados
-            List<Likes> postLikes  = likeRepositorty.findByIdPost(post);
+            List<Likes> postLikes = likeRepositorty.findByIdPost(post);
             for (Likes like : postLikes) {
                 post.removeLikes(like);
-                }
+            }
             likeRepositorty.deleteAll(postLikes);
             // Eliminar el post
             user.get().removePost(post);

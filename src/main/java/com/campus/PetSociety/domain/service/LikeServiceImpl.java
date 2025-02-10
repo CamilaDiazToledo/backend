@@ -11,6 +11,7 @@ import com.campus.PetSociety.dto.CreateLikePostDto;
 import com.campus.PetSociety.dto.LikeCommentDto;
 import com.campus.PetSociety.dto.LikePostDto;
 import com.campus.PetSociety.persistence.entity.*;
+import com.campus.PetSociety.web.exceptions.ActionNotAllowed;
 import com.campus.PetSociety.web.exceptions.NotFoundException;
 import jakarta.transaction.Transactional;
 import java.util.List;
@@ -62,6 +63,11 @@ public class LikeServiceImpl implements LikeService {
             System.out.println("Post no encontrado con id: " + createLikePostDto.getIdPost());
             throw new NotFoundException("Post not found with id: " + createLikePostDto.getIdPost());
         }
+        Optional<Likes> likeOptional =likeRepositorty.findByIdPostAndIdUser(postOptional.get(),userOptional.get());
+        if(likeOptional.isPresent()){
+            System.out.println("User already Like the Post");
+            throw new ActionNotAllowed("Not acction allowed for the Post");
+        }
         System.out.println("Post encontrado: " + postOptional.get());
 
         Users userEntity = userOptional.get();
@@ -95,6 +101,12 @@ public class LikeServiceImpl implements LikeService {
         Optional<Comment> commentOptional = commentRepository.findById(createLikeCommentDto.getIdComment());
         if (!commentOptional.isPresent()) {
             throw new NotFoundException("Comment not found with id: " + createLikeCommentDto.getIdComment());
+        }
+        
+        Optional<Likes> likeOptional =likeRepositorty.findByIdCommentAndIdUser(commentOptional.get(),userOptional.get());
+        if(likeOptional.isPresent()){
+            System.out.println("User already Like the Post");
+            throw new ActionNotAllowed("Not acction allowed for the comment");
         }
 
         Users userEntity = userOptional.get();
