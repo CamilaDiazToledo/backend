@@ -17,6 +17,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
@@ -27,18 +28,22 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepositorty;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepositorty) {
+    public UserServiceImpl(UserRepository userRepositorty, PasswordEncoder passwordEncoder) {
+
         this.userRepositorty = userRepositorty;
+        this.passwordEncoder = passwordEncoder;
 
     }
 
 //CREATE......................................................................
+    
+
     @Transactional
     @Override
     public ResponseEntity<UserDto> createUser(CreateUserDto createUserDTO) {
-
         //validacion email
         ResponseEntity<UserDto> userResponse = findByEmailToCreate(createUserDTO.getEmail());
         if (userResponse.getStatusCode().is2xxSuccessful()) {
@@ -54,7 +59,6 @@ public class UserServiceImpl implements UserService {
         Users usercreated = Users.fromDTOCreate(createUserDTO);
         usercreated = userRepositorty.save(usercreated);
         return ResponseEntity.ok(usercreated.toDTO());
-
     }
 
 //GET.........................................................................
@@ -284,6 +288,18 @@ public class UserServiceImpl implements UserService {
                 .limit(5)
                 .map(Users::toDTO)
                 .collect(Collectors.toList());          
+    }
+    
+    
+    @Override
+    @Transactional
+    public void changePassword(String email, String currentPassword, String newPassword) {
+        Optional<Users> user = userRepositorty.findByEmail(email); 
+        if (!passwordEncoder.matches(currentPassword, user.get().getPassword())) {
+            throw new RuntimeException("Current password is incorrect"); 
+        }
+        user.get().setPassword(passwordEncoder.encode(newPassword));
+        userRepositorty.save(user.get()); 
     }
 
 }

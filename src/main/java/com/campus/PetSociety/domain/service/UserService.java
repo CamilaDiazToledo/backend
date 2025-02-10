@@ -30,4 +30,6 @@ public interface UserService {
     Boolean updateActive(String email);
     Boolean updateDeactive(String email);
     List<UserDto> getRandomUsersNotFollowedBy(String email);
+    
+    void changePassword(String email, String currentPassword, String newPassword);
 }

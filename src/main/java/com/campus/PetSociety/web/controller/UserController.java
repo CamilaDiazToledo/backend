@@ -109,5 +109,11 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
     }
+    
+    
+    @PatchMapping("/update/password/{email}")
+    public void changePassword(@PathVariable String email,@RequestParam String currentPassword,@RequestParam String newPassword){
+        userServiceimpl.changePassword(email, currentPassword, newPassword);
+    }
 
 }
