@@ -82,6 +82,14 @@ public class FollowerGroupServiceImpl implements FollowerGroupService {
         Optional<Users> possibleFollower = userRepositorty.findByEmail(emailFollower);
         Optional<Users> possibleFollowed = userRepositorty.findByEmail(emailFollowed);
 
+        Optional<FollowerGroup> followExist = followerGroupRespository.findByIdFollowerAndIdFollowed(possibleFollower.get(), possibleFollowed.get());
+
+        if (followExist.isPresent()) {
+
+            throw new ActionNotAllowed("You already follow this person");
+
+        }
+
         if (possibleFollower.isPresent() && possibleFollowed.isPresent()) {
             Users follower = possibleFollower.get();
             Users followed = possibleFollowed.get();
@@ -112,6 +120,7 @@ public class FollowerGroupServiceImpl implements FollowerGroupService {
     @Transactional
     @Override
     public void unfollowUser(String emailFollower, String emailFollowed) {
+
         Optional<Users> follower = userRepositorty.findByEmail(emailFollower);
         Optional<Users> followed = userRepositorty.findByEmail(emailFollowed);
 
@@ -136,18 +145,54 @@ public class FollowerGroupServiceImpl implements FollowerGroupService {
 //GET.........................................................................
     //todo 
     @Override
+    public boolean isFollowing(String followerEmail, String followedEmail) {
+        Optional<Users> follower = userRepositorty.findByEmail(followerEmail);
+        Optional<Users> followed = userRepositorty.findByEmail(followedEmail);
+
+        if (follower.isPresent() && followed.isPresent()) {
+            Optional<FollowerGroup> followExist = followerGroupRespository.findByIdFollowerAndIdFollowed(follower.get(), followed.get());
+
+            // Verificación de que el Optional<FollowerGroup> no esté vacío
+            if (followExist.isPresent()) {
+                return followExist.get().getIdFollower().equals(follower.get());
+            } else {
+                return false; // Si no hay una relación de seguimiento, devuelve false
+            }
+        } else {
+            return false; // Si alguno de los usuarios no está presente, devuelve false
+        }
+    }
+
+//    @Override
+//    public boolean isFollowing(String followerEmail, String followedEmail) {
+//        Optional<Users> possibleFollower = userRepositorty.findByEmail(followerEmail);
+//        Optional<Users> possibleFollowed = userRepositorty.findByEmail(followedEmail);
+//
+//        if (possibleFollower.isPresent() && possibleFollowed.isPresent()) {
+//            Users follower = possibleFollower.get();
+//            Users followed = possibleFollowed.get();
+//
+//            Optional<FollowerGroup> followExist = followerGroupRespository.findByIdFollowerAndIdFollowed(follower, followed);
+//            return followExist.isPresent();
+//        } else {
+//            return false; 
+//        }
+//    }
+    @Transactional
+    @Override
     public List<UserDto> getFolloweds(String emailFollower) {
         List<Users> followedUsers = followerGroupRespository.findFollowedByFollowerEmail(emailFollower);
 
         // Transformar la lista de Users a UserDto
         return followedUsers.stream()
-                .map(user -> new UserDto(user.getName(), user.getEmail(),
+                .map(user -> new UserDto(user.getName(), user.getUserName(), user.getEmail(),
                 user.getBiography(), user.getPhoto(),
                 user.getCreationDate(), user.getLastLogin(),
-                user.getUpdatedAt(), user.getActive()))
+                user.getUpdatedAt(), user.getActive(), isFollowing(emailFollower, user.getEmail())))
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public List<UserDto> getFollowers(String emailFollowed) {
 
@@ -155,10 +200,10 @@ public class FollowerGroupServiceImpl implements FollowerGroupService {
 
         // Transformar la lista de Users a UserDto
         return followerUsers.stream()
-                .map(user -> new UserDto(user.getName(), user.getEmail(),
+                .map(user -> new UserDto(user.getName(), user.getUserName(), user.getEmail(),
                 user.getBiography(), user.getPhoto(),
                 user.getCreationDate(), user.getLastLogin(),
-                user.getUpdatedAt(), user.getActive()))
+                user.getUpdatedAt(), user.getActive(), isFollowing(emailFollowed, user.getEmail())))
                 .collect(Collectors.toList());
     }
 

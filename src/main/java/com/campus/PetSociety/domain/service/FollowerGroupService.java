@@ -28,4 +28,6 @@ public interface FollowerGroupService {
 
     List<UserDto> getFolloweds(String emailFollower );
     
+    boolean isFollowing(String followerEmail, String followedEmail);
+    
 }

@@ -113,6 +113,7 @@ public class FollowerGroup {
     
     public  FollowerGroupDto toDTO(){
         FollowerGroupDto followerGroupDto = new FollowerGroupDto();
+        followerGroupDto.setIdFollow(this.getIdFG());
         followerGroupDto.setEmailFollowed(this.idFollowed.getEmail());
         followerGroupDto.setEmailFollower(this.idFollower.getEmail());
         followerGroupDto.setPhotoFollowed(this.idFollowed.getPhoto());

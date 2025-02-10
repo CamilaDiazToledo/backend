@@ -9,7 +9,7 @@ package com.campus.PetSociety.dto;
  * @author camid
  */
 public class FollowerGroupDto {
-    
+    private Long idFollow;
     private String emailFollower;
     private String emailFollowed;
     private String photoFollower;
@@ -20,13 +20,22 @@ public class FollowerGroupDto {
     public FollowerGroupDto() {
     }
 
-    public FollowerGroupDto(String emailFollower, String emailFollowed, String photoFollower, String photoFollowed, String nameFollower, String nameFollowed) {
+    public FollowerGroupDto(Long idFollow, String emailFollower, String emailFollowed, String photoFollower, String photoFollowed, String nameFollower, String nameFollowed) {
+        this.idFollow = idFollow;
         this.emailFollower = emailFollower;
         this.emailFollowed = emailFollowed;
         this.photoFollower = photoFollower;
         this.photoFollowed = photoFollowed;
         this.nameFollower = nameFollower;
         this.nameFollowed = nameFollowed;
+    }
+
+    public Long getIdFollow() {
+        return idFollow;
+    }
+
+    public void setIdFollow(Long idFollow) {
+        this.idFollow = idFollow;
     }
 
     public String getEmailFollower() {

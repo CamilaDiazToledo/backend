@@ -22,12 +22,14 @@ public class UserDto {
     private Date lastLogin;
     private Date updatedAt;
     private Boolean active;
+    private Boolean friend;
 
     public UserDto() {
     }
 
-    public UserDto(String name, String email, String biography, String photo, Date creationDate, Date lastLogin, Date updatedAt, Boolean active) {
+    public UserDto(String name, String userName, String email, String biography, String photo, Date creationDate, Date lastLogin, Date updatedAt, Boolean active,Boolean friend) {
         this.name = name;
+        this.userName = userName;
         this.email = email;
         this.biography = biography;
         this.photo = photo;
@@ -35,6 +37,8 @@ public class UserDto {
         this.lastLogin = lastLogin;
         this.updatedAt = updatedAt;
         this.active = active;
+        this.friend = friend;
+        
     }
 
     public String getName() {
@@ -109,7 +113,17 @@ public class UserDto {
         this.active = active;
     }
 
+    public Boolean getFriend() {
+        return friend;
+    }
+
+    public void setFriend(Boolean friend) {
+        this.friend = friend;
+    }
     
+    
+
+  
 
     
     

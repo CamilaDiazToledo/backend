@@ -312,11 +312,13 @@ public class Users {
         usersDTO.setCreationDate(this.creationDate);
         usersDTO.setUpdatedAt(this.updatedAt);
         usersDTO.setName(this.name);
+        usersDTO.setUserName(this.userName);
         usersDTO.setEmail(this.email);
         usersDTO.setPhoto(this.photo);
         usersDTO.setLastLogin(this.lastLogin);
         usersDTO.setActive(this.active); 
         usersDTO.setUserName(this.userName);
+        usersDTO.setFriend(Boolean.FALSE);
         return usersDTO;
                 
         
