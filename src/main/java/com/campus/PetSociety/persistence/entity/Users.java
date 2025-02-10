@@ -41,7 +41,7 @@ public class Users {
     @Column(nullable = false, unique = true, length = 100)
     private String email;
     
-    @Column(nullable = false, length = 18)
+    @Column(nullable = false, length = 1000)
     private String password;
     
     private String biography;
