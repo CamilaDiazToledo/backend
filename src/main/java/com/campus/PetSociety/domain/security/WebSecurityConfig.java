@@ -40,9 +40,13 @@ class WebSecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authz -> authz
+                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/doc/swagger-ui.html", "/swagger-resources/**").permitAll()
+            
+                        
                 .requestMatchers(HttpMethod.POST, LOGIN_URL).permitAll()
                 .requestMatchers(HttpMethod.POST, "/register").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/user/all").permitAll() 
+     
                 .anyRequest().authenticated()
                 )
                 .addFilterAfter(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
