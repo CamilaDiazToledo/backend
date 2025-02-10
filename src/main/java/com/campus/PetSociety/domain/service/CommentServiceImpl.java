@@ -87,7 +87,7 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     @Override
     public List<CommentDto> getAllCommentByIdPost(Long postId) {
-        List<Comment> comments = commentRepository.findByIdPost_IdPost(postId);
+        List<Comment> comments = commentRepository.findCommentByPostId(postId);
         return comments.stream()
                 .map(Comment::toDTO)
                 .collect(Collectors.toList());

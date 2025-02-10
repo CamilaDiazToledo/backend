@@ -28,6 +28,10 @@ public interface CommentRepository extends JpaRepository<Comment, Long>{
     @Query("SELECT c FROM Comment c JOIN c.likes l WHERE l = :like")
     Optional<Comment> findCommentByLike(@Param("like") Likes like);
     
-    
+    @Query("SELECT c FROM Comment c "
+            + "WHERE c.idPost.idPost = :postId "
+            + "AND c.idUser.active = TRUE "
+            + "ORDER BY c.createdAt DESC")
+    List<Comment> findCommentByPostId(@Param("postId") Long postId);
     
 }

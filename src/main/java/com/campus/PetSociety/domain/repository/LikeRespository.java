@@ -11,6 +11,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  *
@@ -19,11 +20,28 @@ import org.springframework.data.jpa.repository.Query;
 public interface LikeRespository extends JpaRepository<Likes, Long> {
 
     List<Likes> findByIdPost_IdPost(Long IdPost);
+
     List<Likes> findByIdPost(Post post);
+
     List<Likes> findByIdComment(Comment comment);
+
     List<Likes> findByIdComment_IdComment(Long IdComment);
+
     Optional<Likes> findByIdPostAndIdUser(Post idPost, Users idUser);
+
     Optional<Likes> findByIdCommentAndIdUser(Comment idComment, Users idUser);
+
+    @Query("SELECT l FROM Likes l "
+            + "WHERE l.idPost.idPost = :postId "
+            + "AND l.idUser.active = TRUE "
+            + "ORDER BY l.reactionDate DESC")
+    List<Likes> findLikesByPostId(@Param("postId") Long postId);
+
+    @Query("SELECT l FROM Likes l "
+            + "WHERE l.idComment.idComment = :commentId "
+            + "AND l.idUser.active = TRUE "
+            + "ORDER BY l.reactionDate DESC")
+    List<Likes> findLikesByCommentId(@Param("commentId") Long commentId);
 
     @Modifying
     @Transactional

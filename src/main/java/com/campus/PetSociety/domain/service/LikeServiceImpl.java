@@ -130,7 +130,7 @@ public class LikeServiceImpl implements LikeService {
     @Transactional
     @Override
     public List<LikePostDto> getAllLikeByIdPost(Long postId) {
-        List<Likes> likes = likeRepositorty.findByIdPost_IdPost(postId);
+        List<Likes> likes = likeRepositorty.findLikesByPostId(postId);
         return likes.stream()
                 .map(Likes::toDTOLikePost)
                 .collect(Collectors.toList());
@@ -140,7 +140,7 @@ public class LikeServiceImpl implements LikeService {
     @Transactional
     @Override
     public List<LikeCommentDto> getAllLikeByIdComment(Long commentId) {
-        List<Likes> likes = likeRepositorty.findByIdComment_IdComment(commentId);
+        List<Likes> likes = likeRepositorty.findLikesByCommentId(commentId);
         return likes.stream()
                 .map(Likes::toDTOLikeComment)
                 .collect(Collectors.toList());
